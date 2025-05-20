@@ -11,45 +11,33 @@
 # assistance with configuration, feel free to create a help ticket in the Fortify on Demand portal.                                            #
 ################################################################################################################################################
 
-name: Fortify AST Scan
+name: Fortify SCA Scan
 
 on:
-  workflow_dispatch:
-  pull_request:
-    branches: [ "master" ]
   push:
-    branches: [ "master" ]
+    branches:
+      - main
 
 jobs:
-  Fortify-AST-Scan:
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
+  fortify-scan:
+    runs-on: [self-hosted, Windows, X64]
 
     steps:
-      # Check out source code
-      - name: Check Out Source Code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Java is required to run the various Fortify utilities. Ensuring proper version is installed on the runner.
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11
-          distribution: 'temurin'
+    - name: Run Fortify SCA Translation
+      run: |
+        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -clean
+        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -Xmx4G -debug -verbose -scan -f myApp.fpr .
 
-      # Perform Fortify on Demand SAST + SCA scan and import SAST results into GitHub code scanning alerts
-      - name: Run FoD SAST Scan
-        uses: fortify/github-action@v1
-        with:
-          sast-scan: true
-        env:
-          FOD_URL: https://ams.fortify.com
-          FOD_TENANT: ${{secrets.FOD_TENANT}}
-          FOD_USER: ${{secrets.FOD_USER}}
-          FOD_PASSWORD: ${{secrets.FOD_PAT}}
-          #FOD_RELEASE: MyApp:MyRelease
-          EXTRA_PACKAGE_OPTS: -oss
-          DO_EXPORT: true
+    - name: Upload FPR to SSC
+      run: |
+        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\fortifyclient.bat" uploadFPR -url https://localhost:8443/ssc -authtoken f783e7d6-ee0e-4846-bed7-adcc8d767bab -project "github-action" -version "1" -file myApp.fpr
+
+    - name: Check FPR exists
+      run: |
+        if not exist myApp.fpr (
+          echo "FPR file was not created!"
+          exit 1
+        )
