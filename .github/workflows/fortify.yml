@@ -31,7 +31,7 @@ jobs:
       shell: cmd
       run: |
         "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -clean
-        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -Xmx4G -debug -verbose -scan -f myApp.fpr .
+        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -Xmx4G -debug -verbose -scan -f myApp.fpr
 
     - name: Upload FPR to SSC
       shell: cmd
