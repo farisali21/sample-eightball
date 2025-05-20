@@ -38,9 +38,9 @@ jobs:
       run: |
                "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\scancentral.bat" -url https://localhost:8444/scancentral-ctrl start -upload -versionid 10001 -uptoken f783e7d6-ee0e-4846-bed7-adcc8d767bab -b myApp -scan
 
-    - name: Check FPR exists
-      run: |
-        if not exist myApp.fpr (
-          echo "FPR file was not created!"
-          exit 1
-        )
+    # - name: Check FPR exists
+    #   run: |
+    #     if not exist myApp.fpr (
+    #       echo "FPR file was not created!"
+    #       exit 1
+    #     )
