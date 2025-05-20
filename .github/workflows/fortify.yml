@@ -31,12 +31,12 @@ jobs:
       shell: cmd
       run: |
         "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -clean
-        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -Xmx4G -debug -verbose -scan -f myApp.fpr
+        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\sourceanalyzer.exe" -b myApp -cp LoginProject\lib\**\*.jar -source 17 .
 
     - name: Upload FPR to SSC
       shell: cmd
       run: |
-        "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\fortifyclient.bat" uploadFPR -url https://localhost:8443/ssc -authtoken f783e7d6-ee0e-4846-bed7-adcc8d767bab -project "github-action" -version "1" -file myApp.fpr
+               "C:\Program Files\Fortify\Fortify_SCA_24.4.0\bin\scancentral.bat" -url https://localhost:8444/scancentral-ctrl start -upload -versionid 10001 -uptoken f783e7d6-ee0e-4846-bed7-adcc8d767bab -b myApp -scan
 
     - name: Check FPR exists
       run: |
